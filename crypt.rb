@@ -55,14 +55,35 @@
         end
     end
     
+    def playfair (textoclaro, m)
+        
+    end
+    
+    def buscaMatriz (matriz, c)
+        (0..(matriz.length-1)).each do |i|
+            if ! ((j=matriz[i].index(c)).nil?)
+                return [i,j]
+            end
+        end
+    end
+    
 # }
 
 # main {
+    # pega n de colunas e chave da playfair
     if ARGV.length < 2
         abort "escreve os argumentos babaca"
     end
     n=ARGV[0].to_i
     keyword=ARGV[1]
     
+    # matriz (array de arrays) gerada a partir da chave
     matchave = criaMatrizChave(criaArrayChave(keyword), 5)
+    
+    textoclaro = "boatarde"
+    
+    textocifrado = playfair(textoclaro, matchave)
+    puts buscaMatriz(matchave,"a")
+    # textomaiscifrado = transposicao(textocifrado)
+    
 # }
