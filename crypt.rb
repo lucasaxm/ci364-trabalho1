@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
+require 'i18n'
 
 # methods{
     def criaArrayChave(keyword)
@@ -56,7 +57,91 @@
     end
     
     def playfair (textoclaro, m)
-        
+        textocifrado = ""
+        textoclaro = preparaEntrada(textoclaro)
+        cont=0
+        pos1=[]
+        pos2=[]
+        textoclaro.each_char do |c|
+            if cont==0
+                pos1 = buscaMatriz(m, c)
+                # puts "c= "+c.inspect
+                # puts "pos1= "+pos1.inspect
+                # puts "pos1[0]= "+pos1[0].inspect
+                # puts "cont= "+cont.to_s
+                cont+=1
+                
+            else
+                pos2 = buscaMatriz(m, c)
+                # puts "c ="+c.inspect
+                # puts "pos2= "+pos2.inspect
+                # puts "pos1[0]= "+pos1[0].inspect
+                # puts "pos2[0]= "+pos2[0].inspect
+                # puts "cont= "+cont.to_s
+                if pos1[0] == pos2[0]
+                    charCifrado1 = m[pos1[0]][(pos1[1]+1)%5]
+                    charCifrado2 = m[pos2[0]][(pos2[1]+1)%5]
+                elsif pos1[1] == pos2[1]
+                    charCifrado1 = m[(pos1[0]+1)%5][pos1[1]]
+                    # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]"
+                    charCifrado2 = m[(pos2[0]+1)%5][pos2[1]]
+                    # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]"
+                else
+                    charCifrado1 = m[pos1[0]][pos2[1]]
+                    charCifrado2 = m[pos2[0]][pos1[1]]
+                end
+                cont=0
+            end
+            textocifrado = textocifrado.to_s+charCifrado1.to_s+charCifrado2.to_s
+        end
+        return textocifrado
+    end
+
+    def desplayfair (textocifrado, m)
+        textoclaro = ""
+        textocifrado = preparaEntrada(textocifrado)
+        cont=0
+        pos1=[]
+        pos2=[]
+        textocifrado.each_char do |c|
+            if cont==0
+                pos1 = buscaMatriz(m, c)
+                # puts "c= "+c.inspect
+                # puts "pos1= "+pos1.inspect
+                # puts "pos1[0]= "+pos1[0].inspect
+                # puts "cont= "+cont.to_s
+                cont+=1
+                
+            else
+                pos2 = buscaMatriz(m, c)
+                # puts "c ="+c.inspect
+                # puts "pos2= "+pos2.inspect
+                # puts "pos1[0]= "+pos1[0].inspect
+                # puts "pos2[0]= "+pos2[0].inspect
+                # puts "cont= "+cont.to_s
+                if pos1[0] == pos2[0]
+                    charDecifrado1 = m[pos1[0]][(pos1[1]-1)%5]
+                    charDecifrado2 = m[pos2[0]][(pos2[1]-1)%5]
+                elsif pos1[1] == pos2[1]
+                    charDecifrado1 = m[(pos1[0]-1)%5][pos1[1]]
+                    # puts "charDecifrado1 = m["+((pos1[0]-1)%5).to_s+"]["+pos1[1].to_s+"]"
+                    charDecifrado2 = m[(pos2[0]-1)%5][pos2[1]]
+                    # puts "charDecifrado2 = m["+((pos2[0]-1)%5).to_s+"]["+pos2[1].to_s+"]"
+                else
+                    charDecifrado1 = m[pos1[0]][pos2[1]]
+                    charDecifrado2 = m[pos2[0]][pos1[1]]
+                end
+                cont=0
+            end
+            textoclaro = textoclaro.to_s+charDecifrado1.to_s+charDecifrado2.to_s
+        end
+        return textoclaro
+    end
+    
+    def preparaEntrada (string)
+        texto = I18n.transliterate(string).gsub(/[^0-9A-Za-z]/, '')
+        # coloca os x necessários
+        return texto.gsub(/j/,'i')
     end
     
     def buscaMatriz (matriz, c)
@@ -70,6 +155,7 @@
 # }
 
 # main {
+    I18n.enforce_available_locales = false  
     # pega n de colunas e chave da playfair
     if ARGV.length < 2
         abort "escreve os argumentos babaca"
@@ -80,10 +166,12 @@
     # matriz (array de arrays) gerada a partir da chave
     matchave = criaMatrizChave(criaArrayChave(keyword), 5)
     
-    textoclaro = "boatarde"
+    textoclaro = "lucazx"
     
     textocifrado = playfair(textoclaro, matchave)
-    puts buscaMatriz(matchave,"a")
+    puts textocifrado
+    textodecifrado = desplayfair(textocifrado, matchave)
+    puts textodecifrado
     # textomaiscifrado = transposicao(textocifrado)
     
 # }
