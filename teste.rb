@@ -1,12 +1,9 @@
 #!/usr/bin/ruby
 
-def read_file(file_name)
-  file = File.open(file_name, "r")
-  data = file.read
-  file.close
-  return data
+def is_numeric?(obj) 
+   obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
 end
 
-puts "Start"
-puts read_file("input")
-puts "End"
+puts is_numeric?(5)
+puts is_numeric?("5")
+puts is_numeric?("5aa")

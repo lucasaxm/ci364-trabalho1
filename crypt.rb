@@ -60,81 +60,90 @@ require 'i18n'
     def playfair (textoclaro, m)
         textocifrado = ""
         textoclaro = preparaEntrada(textoclaro)
+        puts textoclaro
         cont=0
         pos1=[]
         pos2=[]
         textoclaro.each_char do |c|
-            if cont==0
-                pos1 = buscaMatriz(m, c)
-                # puts "c= "+c.inspect
-                # puts "pos1= "+pos1.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "cont= "+cont.to_s
-                cont+=1
-                
+            if is_numeric?(c)
+                textocifrado = textocifrado+c
             else
-                pos2 = buscaMatriz(m, c)
-                # puts "c ="+c.inspect
-                # puts "pos2= "+pos2.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "pos2[0]= "+pos2[0].inspect
-                # puts "cont= "+cont.to_s
-                if pos1[0] == pos2[0]
-                    charCifrado1 = m[pos1[0]][(pos1[1]+1)%5]
-                    charCifrado2 = m[pos2[0]][(pos2[1]+1)%5]
-                elsif pos1[1] == pos2[1]
-                    charCifrado1 = m[(pos1[0]+1)%5][pos1[1]]
-                    # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]"
-                    charCifrado2 = m[(pos2[0]+1)%5][pos2[1]]
-                    # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]"
+                if cont==0
+                    pos1 = buscaMatriz(m, c)
+                    # puts "c= "+c.inspect
+                    # puts "pos1= "+pos1.inspect
+                    # puts "pos1[0]= "+pos1[0].inspect
+                    # puts "cont= "+cont.to_s
+                    cont+=1
+                    
                 else
-                    charCifrado1 = m[pos1[0]][pos2[1]]
-                    charCifrado2 = m[pos2[0]][pos1[1]]
+                    pos2 = buscaMatriz(m, c)
+                    # puts "c ="+c.inspect
+                    # puts "pos2= "+pos2.inspect
+                    # puts "pos1[0]= "+pos1[0].inspect
+                    # puts "pos2[0]= "+pos2[0].inspect
+                    # puts "cont= "+cont.to_s
+                    if pos1[0] == pos2[0]
+                        charCifrado1 = m[pos1[0]][(pos1[1]+1)%5]
+                        charCifrado2 = m[pos2[0]][(pos2[1]+1)%5]
+                    elsif pos1[1] == pos2[1]
+                        charCifrado1 = m[(pos1[0]+1)%5][pos1[1]]
+                        # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]"
+                        charCifrado2 = m[(pos2[0]+1)%5][pos2[1]]
+                        # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]"
+                    else
+                        charCifrado1 = m[pos1[0]][pos2[1]]
+                        charCifrado2 = m[pos2[0]][pos1[1]]
+                    end
+                    cont=0
                 end
-                cont=0
+                textocifrado = textocifrado.to_s+charCifrado1.to_s+charCifrado2.to_s
             end
-            textocifrado = textocifrado.to_s+charCifrado1.to_s+charCifrado2.to_s
         end
         return textocifrado
     end
 
     def desplayfair (textocifrado, m)
         textoclaro = ""
-        textocifrado = preparaEntrada(textocifrado)
         cont=0
         pos1=[]
         pos2=[]
         textocifrado.each_char do |c|
-            if cont==0
-                pos1 = buscaMatriz(m, c)
-                # puts "c= "+c.inspect
-                # puts "pos1= "+pos1.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "cont= "+cont.to_s
-                cont+=1
-                
+            if is_numeric?(c)
+                textoclaro = textoclaro+c
             else
-                pos2 = buscaMatriz(m, c)
-                # puts "c ="+c.inspect
-                # puts "pos2= "+pos2.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "pos2[0]= "+pos2[0].inspect
-                # puts "cont= "+cont.to_s
-                if pos1[0] == pos2[0]
-                    charDecifrado1 = m[pos1[0]][(pos1[1]-1)%5]
-                    charDecifrado2 = m[pos2[0]][(pos2[1]-1)%5]
-                elsif pos1[1] == pos2[1]
-                    charDecifrado1 = m[(pos1[0]-1)%5][pos1[1]]
-                    # puts "charDecifrado1 = m["+((pos1[0]-1)%5).to_s+"]["+pos1[1].to_s+"]"
-                    charDecifrado2 = m[(pos2[0]-1)%5][pos2[1]]
-                    # puts "charDecifrado2 = m["+((pos2[0]-1)%5).to_s+"]["+pos2[1].to_s+"]"
+                
+                if cont==0
+                    pos1 = buscaMatriz(m, c)
+                    # puts "c= "+c.inspect
+                    # puts "pos1= "+pos1.inspect
+                    # puts "pos1[0]= "+pos1[0].inspect
+                    # puts "cont= "+cont.to_s
+                    cont+=1
+                    
                 else
-                    charDecifrado1 = m[pos1[0]][pos2[1]]
-                    charDecifrado2 = m[pos2[0]][pos1[1]]
+                    pos2 = buscaMatriz(m, c)
+                    # puts "c ="+c.inspect
+                    # puts "pos2= "+pos2.inspect
+                    # puts "pos1[0]= "+pos1[0].inspect
+                    # puts "pos2[0]= "+pos2[0].inspect
+                    # puts "cont= "+cont.to_s
+                    if pos1[0] == pos2[0]
+                        charDecifrado1 = m[pos1[0]][(pos1[1]-1)%5]
+                        charDecifrado2 = m[pos2[0]][(pos2[1]-1)%5]
+                    elsif pos1[1] == pos2[1]
+                        charDecifrado1 = m[(pos1[0]-1)%5][pos1[1]]
+                        # puts "charDecifrado1 = m["+((pos1[0]-1)%5).to_s+"]["+pos1[1].to_s+"]"
+                        charDecifrado2 = m[(pos2[0]-1)%5][pos2[1]]
+                        # puts "charDecifrado2 = m["+((pos2[0]-1)%5).to_s+"]["+pos2[1].to_s+"]"
+                    else
+                        charDecifrado1 = m[pos1[0]][pos2[1]]
+                        charDecifrado2 = m[pos2[0]][pos1[1]]
+                    end
+                    cont=0
                 end
-                cont=0
+                textoclaro = textoclaro.to_s+charDecifrado1.to_s+charDecifrado2.to_s
             end
-            textoclaro = textoclaro.to_s+charDecifrado1.to_s+charDecifrado2.to_s
         end
         return textoclaro
     end
@@ -145,11 +154,15 @@ require 'i18n'
         ant=texto[0]
         textoNovo=texto[0]
         texto[1..-1].each_char do |c|
-            if c==ant
-                textoNovo << (c!='X' ? 'X' : 'H')
-            end
-            textoNovo << c
-            ant = c
+            if is_numeric?(c)
+                textoNovo = textoNovo+c
+            else
+                if c==ant
+                    textoNovo << (c!='X' ? 'X' : 'H')
+                end
+                textoNovo << c
+                ant = c
+            end    
         end
         if textoNovo.size % 2 != 0
             textoNovo << (textoNovo[-1]=="X" ? "H" : "X")
@@ -158,11 +171,17 @@ require 'i18n'
     end
     
     def buscaMatriz (matriz, c)
+        ret =[]
         (0..(matriz.length-1)).each do |i|
             if ! ((j=matriz[i].index(c)).nil?)
-                return [i,j]
+                ret = [i,j]
+                break
             end
         end
+        if ret.empty?
+            abort "busca matriz deu pau buscando o c = "+c.inspect
+        end
+        return ret
     end
     
     def read_file(file_name)
@@ -170,6 +189,10 @@ require 'i18n'
       data = file.read
       file.close
       return data
+    end
+    
+    def is_numeric?(obj) 
+       obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
     end
 # }
 
@@ -188,8 +211,8 @@ require 'i18n'
     # matriz (array de arrays) gerada a partir da chave
     matchave = criaMatrizChave(criaArrayChave(keyword), 5)
     
-    # textoclaro = read_file("input")
-    textoclaro = "xx"
+    # textoclaro = read_file("newton.txt")
+    textoclaro = "lucas affonso xavier de morais"
     textocifrado = playfair(textoclaro, matchave)
     puts textocifrado
     textodecifrado = desplayfair(textocifrado, matchave)
