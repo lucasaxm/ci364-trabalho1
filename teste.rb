@@ -7,41 +7,70 @@ def is_numeric?(obj)
 end
 
 f=File.open("t", "r")
-dupla=[]
-aux=''
+strdupla=""
+strdupla[0] = f.getc
 f_novo = File.open("texto_preparado.pf","w+")
-dupla[0] = f.getc
+tam=0
+tam_buffer=0
+buffer=""
 i=0
 f.each_char do |c|
+    strdupla[1] = c
     puts "step "+(i+=1).to_s
-    dupla[1] = c
-    puts "dupla = [\""+dupla[0]+"\"][\""+dupla[1]+"\"]"
-    cont = 0
-    strtemp = I18n.transliterate(dupla.to_s).gsub(/\n/,'').gsub(/[^0-9A-Za-z]/, '').upcase
-    if(strtemp.length==1)
-        cont=1
-        dupla[0] = strtemp
-    end
-    if(cont == 0)
-        strtemp = strtemp.gsub(/J/,'I')  
-        if is_numeric?(strtemp[0])
-            if is_numeric?(strtemp[1])
-                f_novo.write(strtemp[0])                    
+    puts "dupla = [\""+strdupla[0]+"\"][\""+strdupla[1]+"\"]"
+    strdupla = I18n.transliterate(strdupla).gsub(/\n/,'').gsub(/[^0-9A-Za-z]/, '').upcase
+    if(strdupla.length==2)
+        strdupla = strdupla.gsub(/J/,'I')
+        if is_numeric?(strdupla[1])
+            buffer << strdupla[1]
+            tam_buffer+=1
+        else
+            f_novo.write(strdupla[0])
+            tam+=1
+            if strdupla[0]==strdupla[1]
+                if strdupla[0]=="X"
+                    f_novo.write("H")
+                else
+                    f_novo.write("X")
+                end
+                tam+=1
             end
-        else         
-            if strtemp[1]==strtemp[0]   # se dois iguais
-                f_novo.write(strtemp[0])    # escreve primeiro
-                aux = (strtemp[0]!='X' ? 'X' : 'H')
-                f_novo.write(aux)   # escreve X
-                f_novo.write(strtemp[1])    # escreve segundo
-            end
+            f_novo.write(buffer)
+            buffer=""
+            strdupla[0]=strdupla[1]
         end
-        dupla[0] = strtemp[1]
+    elsif(strdupla.size==0)
+    	strdupla[0] = f.getc
+    	while is_numeric?(strdupla[0])
+    	    buffer << strdupla[0]
+    	    tam_buffer+=1
+    	    strdupla[0] = f.getc
+    	end
+        f_novo.write(buffer)
+        buffer=""
     end
     f_novo.rewind
+    puts "buffer = "+buffer
+    puts "tam_buffer = "+tam_buffer.to_s
     puts "arquivo = "+f_novo.read
+    puts "tam = "+tam.to_s
     puts
+    
 end
-puts "deveria ser 0AXA00BCXXH"
+f_novo.write(strdupla[0])
+tam+=1
+f_novo.write(buffer)
+buffer=""
+if (tam%2 != 0)
+    if strdupla[0]=='X'
+        f_novo.write("H")
+    else
+        f_novo.write("X")
+    end
+end
+
+f_novo.rewind
+puts "arquivo = "+f_novo.read
+puts
 f_novo.close
 f.close
