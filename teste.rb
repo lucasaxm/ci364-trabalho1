@@ -25,13 +25,15 @@ f.each_char do |c|
     if(cont == 0)
         strtemp = strtemp.gsub(/J/,'I')  
         if is_numeric?(strtemp[0])
+            if is_numeric?(strtemp[1])
                 f_novo.write(strtemp[0])                    
+            end
         else         
             if strtemp[1]==strtemp[0]   # se dois iguais
                 f_novo.write(strtemp[0])    # escreve primeiro
                 aux = (strtemp[0]!='X' ? 'X' : 'H')
                 f_novo.write(aux)   # escreve X
-                # f_novo.write(strtemp[1])    # escreve segundo
+                f_novo.write(strtemp[1])    # escreve segundo
             end
         end
         dupla[0] = strtemp[1]

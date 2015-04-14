@@ -212,7 +212,7 @@ require 'i18n'
     matchave = criaMatrizChave(criaArrayChave(keyword), 5)
     
     # textoclaro = read_file("newton.txt")
-    textoclaro = "lucas affonso xavier de morais"
+    textoclaro = "0AA-00BCX"
     textocifrado = playfair(textoclaro, matchave)
     puts textocifrado
     textodecifrado = desplayfair(textocifrado, matchave)
