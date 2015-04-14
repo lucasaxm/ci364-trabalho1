@@ -57,48 +57,44 @@ require 'i18n'
         end
     end
     
-    def playfair (textoclaro, m)
+    def playfair (f, m)
+        #escrever em um aquivo o texto cifrado
         textocifrado = ""
-        textoclaro = preparaEntrada(textoclaro)
-        puts textoclaro
+        f_preparado = preparaEntrada(f)
         cont=0
         pos1=[]
         pos2=[]
-        textoclaro.each_char do |c|
-            if is_numeric?(c)
-                textocifrado = textocifrado+c
+        f_preparado.each_char do |c|
+            if cont==0
+                pos1 = buscaMatriz(m, c)
+                # puts "c= "+c.inspect
+                # puts "pos1= "+pos1.inspect
+                # puts "pos1[0]= "+pos1[0].inspect
+                # puts "cont= "+cont.to_s
+                cont+=1
+                
             else
-                if cont==0
-                    pos1 = buscaMatriz(m, c)
-                    # puts "c= "+c.inspect
-                    # puts "pos1= "+pos1.inspect
-                    # puts "pos1[0]= "+pos1[0].inspect
-                    # puts "cont= "+cont.to_s
-                    cont+=1
-                    
+                pos2 = buscaMatriz(m, c)
+                # puts "c ="+c.inspect
+                # puts "pos2= "+pos2.inspect
+                # puts "pos1[0]= "+pos1[0].inspect
+                # puts "pos2[0]= "+pos2[0].inspect
+                # puts "cont= "+cont.to_s
+                if pos1[0] == pos2[0]
+                    charCifrado1 = m[pos1[0]][(pos1[1]+1)%5]
+                    charCifrado2 = m[pos2[0]][(pos2[1]+1)%5]
+                elsif pos1[1] == pos2[1]
+                    charCifrado1 = m[(pos1[0]+1)%5][pos1[1]]
+                    # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]"
+                    charCifrado2 = m[(pos2[0]+1)%5][pos2[1]]
+                    # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]"
                 else
-                    pos2 = buscaMatriz(m, c)
-                    # puts "c ="+c.inspect
-                    # puts "pos2= "+pos2.inspect
-                    # puts "pos1[0]= "+pos1[0].inspect
-                    # puts "pos2[0]= "+pos2[0].inspect
-                    # puts "cont= "+cont.to_s
-                    if pos1[0] == pos2[0]
-                        charCifrado1 = m[pos1[0]][(pos1[1]+1)%5]
-                        charCifrado2 = m[pos2[0]][(pos2[1]+1)%5]
-                    elsif pos1[1] == pos2[1]
-                        charCifrado1 = m[(pos1[0]+1)%5][pos1[1]]
-                        # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]"
-                        charCifrado2 = m[(pos2[0]+1)%5][pos2[1]]
-                        # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]"
-                    else
-                        charCifrado1 = m[pos1[0]][pos2[1]]
-                        charCifrado2 = m[pos2[0]][pos1[1]]
-                    end
-                    cont=0
+                    charCifrado1 = m[pos1[0]][pos2[1]]
+                    charCifrado2 = m[pos2[0]][pos1[1]]
                 end
-                textocifrado = textocifrado.to_s+charCifrado1.to_s+charCifrado2.to_s
+                cont=0
             end
+            textocifrado = textocifrado.to_s+charCifrado1.to_s+charCifrado2.to_s
         end
         return textocifrado
     end
@@ -148,26 +144,41 @@ require 'i18n'
         return textoclaro
     end
     
-    def preparaEntrada (string)
-        texto = I18n.transliterate(string).gsub(/\n/,'').gsub(/[^0-9A-Za-z]/, '').upcase
-        texto = texto.gsub(/J/,'I')
-        ant=texto[0]
-        textoNovo=texto[0]
-        texto[1..-1].each_char do |c|
-            if is_numeric?(c)
-                textoNovo = textoNovo+c
-            else
-                if c==ant
-                    textoNovo << (c!='X' ? 'X' : 'H')
+    def preparaEntrada (f)
+        strdupla=""
+        strdupla[0] = f.getc
+        f_novo = File.open("texto_preparado.pf","w+")
+        tam=0
+        i=0
+        
+        f.each_char do |c|
+            strdupla[1] = c
+            puts "step "+(i+=1).to_s
+            puts "dupla = [\""+strdupla[0]+"\"][\""+strdupla[1]+"\"]"
+            strdupla = I18n.transliterate(strdupla).gsub(/\n/,'').gsub(/[^A-Za-z]/, '').upcase
+            if(strdupla.length==2)
+                strdupla = strdupla.gsub(/J/,'I')
+                f_novo.write(strdupla[0])
+                tam+=1
+                if strdupla[0]==strdupla[1]
+                    f_novo.write(strdupla[0]=='X' ? 'H' : 'X')
+                    tam+=1
                 end
-                textoNovo << c
-                ant = c
-            end    
+                strdupla[0]=strdupla[1]
+            elsif(strdupla.size==0)
+            	strdupla[0] = f.getc
+            end
+            f_novo.rewind
+            puts "arquivo = "+f_novo.read
+            puts "tam = "+tam.to_s
+            puts
         end
-        if textoNovo.size % 2 != 0
-            textoNovo << (textoNovo[-1]=="X" ? "H" : "X")
+        f_novo.write(strdupla[0])
+        tam+=1
+        if (tam%2 != 0)
+            f_novo.write(strdupla[0]=='X' ? 'H' : 'X')
         end
-        return textoNovo
+        return f_novo
     end
     
     def buscaMatriz (matriz, c)
