@@ -48,6 +48,8 @@ require 'i18n'
         return m
     end
     
+    
+    
     def imprimeMatriz(m)
         m.each do |linha|
             linha.each do |elemento|
@@ -96,7 +98,6 @@ require 'i18n'
                 textocifrado = charCifrado1+charCifrado2
                 f_cifrado.write(textocifrado)
             end
-            textocifrado = textocifrado.to_s+charCifrado1.to_s+charCifrado2.to_s
         end
         f_claro.close
         return f_cifrado
@@ -151,7 +152,6 @@ require 'i18n'
         strdupla[0] = f.getc
         f_novo = File.open("texto_claro.pf","w+")
         tam=0
-        i=0
 
         f.each_char do |c|
             strdupla[1] = c
@@ -205,6 +205,63 @@ require 'i18n'
       return data
     end
     
+    def criaMatriz(input, ncol)
+        m = Array.new(ordem)
+        i=0
+        input.each do |c|
+            if i<ordem
+                if m[i].nil?
+                    m[i]=[]
+                end
+                if m[i].length<ordem
+                    m[i] << c.upcase
+                else
+                    if (i+=1)<ordem
+                        if m[i].nil?
+                            m[i]=[]
+                        end
+                        m[i] << c.upcase
+                    end
+                end
+            end
+        end
+        return m
+    end
+    
+    def transposicao(f_playfair)
+        f_playfair.rewind
+        f_cifrado = File.open("f_cifrado.tr","w+")
+        cont=0
+        texto = []
+        f_playfair.each_char do |c| #ler o arquivo
+            cont+=1
+            texto << c
+            if ((cont = 1000*n) || f_cifrado.eof?)
+                # m = criaMatriz(texto, n)
+                # mudaOrdemColuna( m, n)
+                # escreve matriz no arquivo
+                # cont =0
+            end    
+        end
+        
+        #retorna f_cifrado
+    end
+    
+    def mudaOrdemColuna(matriz, n, numeroDelinhas)
+        # i=0
+        # j=0
+        m_aux = Array.new(numeroDelinhas)    #cria matriz auxilia
+        modColuna = 0 #mod da coluna
+            # enquanto modColuna < n
+                #le indice da coluna de matriz de alguma forma
+                # se indice mod == modcoluna
+                    #enquanto o j < numeroDelinhas 
+                        #matrizAux[j][indiceColuna] = matriz[j][indiceColuna]
+                #modColuna++
+        
+        #retornaMatriz auxiliar
+    end
+    
 # }
 
 # main {
@@ -218,20 +275,20 @@ require 'i18n'
         abort "n sabe multiplicar por 3?"
     end
     keyword=ARGV[1]
-    f=File.open("input", "r")
+    f=File.open("newton.ign", "r")
     
     # matriz (array de arrays) gerada a partir da chave
     matchave = criaMatrizChave(criaArrayChave(keyword), 5)
     
     # textoclaro = read_file("newton.txt")
     # textoclaro = "lucas affonso xavier de morais"
-    f_cifrado = playfair(f, matchave)
+    f_playfair = playfair(f, matchave)
     f.close
-    f_cifrado.rewind
-    puts "arquivo = "+f_cifrado.read
-    f_decifrado = desplayfair(f_cifrado, matchave)
-    f_decifrado.rewind
-    puts "arquivo = "+f_decifrado.read
+    f_playfair.rewind
+    puts "arquivo = "+f_playfair.read
+    # f_decifrado = desplayfair(f_playfair, matchave)
+    # f_decifrado.rewind
+    # puts "arquivo = "+f_decifrado.read
     # textomaiscifrado = transposicao(textocifrado)
-    f_decifrado.close
+    # f_decifrado.close
 # }
