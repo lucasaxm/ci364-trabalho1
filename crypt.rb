@@ -304,32 +304,6 @@ require 'i18n'
         return mAux
     end
 
-    def refazOrdemColuna(matriz, n)
-        indiceColAux = 0
-        numLinhas = matriz.length
-        mAux = Array.new(numLinhas)    #cria matriz auxilia
-        indiceComp = 0
-        (0..2).each do |contMod|
-            indiceComp= contMod
-            (0..n-1).each do |indiceCol| #le indice da coluna de matriz de alguma forma
-                if(indiceComp == indiceCol && indiceColAux < n)
-                    puts indiceComp
-                    (0..numLinhas-1).each do |indiceLin| #enquanto o j < numeroDelinhas 
-                        if mAux[indiceLin].nil?
-                            mAux[indiceLin]=[]
-                        end
-                        mAux[indiceLin][indiceColAux] = matriz[indiceLin][indiceComp]
-                    end
-                # puts indiceColAux
-                indiceColAux+=1
-                indiceComp+=2
-                end
-            end
-        end 
-        puts 'MatrizRefeita'    
-        imprimeMatriz(mAux) 
-    end
-
     
 # }
 
