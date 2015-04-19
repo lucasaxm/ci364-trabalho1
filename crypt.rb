@@ -236,7 +236,7 @@ require 'i18n'
         return m
     end
     
-    def transposicao(f_playfair)
+    def transposicao(f_playfair, n)
         f_playfair.rewind
         f_cifrado = File.open("f_cifrado.tr","w+")
         cont=0
@@ -255,7 +255,7 @@ require 'i18n'
         #retorna f_cifrado
     end
 
-    def desfazTransposicao(f_cifrado)
+    def desfazTransposicao(f_cifrado, n)
         f_cifrado.rewind
         f_playfair = File.open("f_playfair.tr","w+")
         cont=0
@@ -264,17 +264,35 @@ require 'i18n'
             cont+=1
             texto << c
             if ((cont = 1000*n) || f_cifrado.eof?)
-                #desfaz arrayParaMatriz
+                transformaArray(texto, cont/n, n)
                 matriz = criaMatriz(1000,n,texto)
                 matrizT = refazOrdemColuna(matriz, n)
-
-                # escreve matriz no arquivo
+                matrizToArquivo(matrizT,f_playfair) # escreve matriz no arquivo
                 cont =0
             end    
         end
         
-        #retorna f_playfair
+        retorna f_playfair
     end
+
+    def transformaArray(texto, numLinhas, numCol)
+        textoAux = []
+        i=0
+        (0..numLinhas-1).each do |indiceColAux|
+            compCol = indiceColAux
+            puts compCol
+            (0..numCol-1).each do |j|
+                # puts ( (indiceCol == compCol) && (compCol<numCol))
+                if( compCol <((numCol)*(numLinhas)))
+                    textoAux[i] = texto[compCol]
+                    i+=1
+                    puts 'incrementacompCol: ' + compCol.to_s + '  letra: ' + texto[compCol].to_s
+                    compCol+=(numLinhas)
+                end 
+            end
+        end
+        return textoAux
+    end        
     
     def mudaOrdemColuna(matriz)
         indiceColAux = 0
