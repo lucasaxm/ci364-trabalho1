@@ -254,6 +254,27 @@ require 'i18n'
         
         #retorna f_cifrado
     end
+
+    def desfazTransposicao(f_cifrado)
+        f_cifrado.rewind
+        f_playfair = File.open("f_playfair.tr","w+")
+        cont=0
+        texto = []
+        f_cifrado.each_char do |c| #ler o arquivo
+            cont+=1
+            texto << c
+            if ((cont = 1000*n) || f_cifrado.eof?)
+                #desfaz arrayParaMatriz
+                matriz = criaMatriz(1000,n,texto)
+                matrizT = refazOrdemColuna(matriz, n)
+
+                # escreve matriz no arquivo
+                cont =0
+            end    
+        end
+        
+        #retorna f_playfair
+    end
     
     def mudaOrdemColuna(matriz)
         indiceColAux = 0
