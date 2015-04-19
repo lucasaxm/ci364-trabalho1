@@ -276,6 +276,28 @@ require 'i18n'
         #retorna f_playfair
     end
     
+    def tiraComplemento(m)
+        ult = m.length-1
+        linha=[]
+        i=0
+        j=1
+        while j<m[ult].length
+            if m[ult][i]!=m[ult][j]
+                linha << m[ult][i]
+                i+=1
+                j+=1
+            else
+                i+=2
+                j+=2
+            end
+        end
+        if i<m[ult].length
+            linha << m[ult][i]
+        end
+        m[ult] = linha
+        return m
+    end
+
     def mudaOrdemColuna(matriz)
         indiceColAux = 0
         n = matriz.first.length
