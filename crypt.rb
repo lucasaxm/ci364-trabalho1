@@ -198,12 +198,12 @@ require 'i18n'
         return ret
     end
     
-    def criaMatriz(input, ncol)
-        m = Array.new(ordem)
-        i=0
-        input.each do |c|
-            if i<ordem
-                if m[i].nil?
+    def criaMatriz(maxlinhas, tamlinha, input)
+        m = [] # => cria vetor base para a matriz (arg=numero de linhas)
+        i=0 # => controle de linhas
+        input.each do |c|   # => percorre vetor de entrada (c = elemento)
+            if i<maxlinhas  # => se a matriz ainda nao esta cheia
+                if m[i].nil? # => inicializa linha se precisar
                     m[i]=[]
                 end
                 if m[i].length<tamlinha # => se linha NAO estiver cheia, recebe mais um elemento
