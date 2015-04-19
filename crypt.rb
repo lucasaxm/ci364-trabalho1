@@ -198,19 +198,12 @@ require 'i18n'
         return ret
     end
     
-    def read_file(file_name)
-      file = File.open(file_name, "r")
-      data = file.read
-      file.close
-      return data
-    end
-    
-    def criaMatriz(maxlinhas, tamlinha, input)
-        m = [] # => cria vetor base para a matriz (arg=numero de linhas)
-        i=0 # => controle de linhas
-        input.each do |c|   # => percorre vetor de entrada (c = elemento)
-            if i<maxlinhas  # => se a matriz ainda nao esta cheia
-                if m[i].nil? # => inicializa linha se precisar
+    def criaMatriz(input, ncol)
+        m = Array.new(ordem)
+        i=0
+        input.each do |c|
+            if i<ordem
+                if m[i].nil?
                     m[i]=[]
                 end
                 if m[i].length<tamlinha # => se linha NAO estiver cheia, recebe mais um elemento
@@ -253,29 +246,34 @@ require 'i18n'
             texto << c
             if ((cont = 1000*n) || f_cifrado.eof?)
                 # m = criaMatriz(texto, n)
-                # mudaOrdemColuna( m, n)
+                # mudaOrdemColuna( m, n) #feito
                 # escreve matriz no arquivo
-                # cont =0
+                cont =0
             end    
         end
         
         #retorna f_cifrado
     end
     
-    def mudaOrdemColuna(matriz, n, numeroDelinhas)
-        # i=0
-        # j=0
-        m_aux = Array.new(numeroDelinhas)    #cria matriz auxilia
-        modColuna = 0 #mod da coluna
-            # enquanto modColuna < n
-                #le indice da coluna de matriz de alguma forma
-                # se indice mod == modcoluna
-                    #enquanto o j < numeroDelinhas 
-                        #matrizAux[j][indiceColuna] = matriz[j][indiceColuna]
-                #modColuna++
-        
-        #retornaMatriz auxiliar
+    def mudaOrdemColuna(matriz, n)
+        indiceColAux = 0
+        numLinhas = matriz.length
+        mAux = Array.new(numLinhas)    #cria matriz auxilia
+        (0..2).each do |modCol| #mod da coluna - > enquanto modColuna < n
+            (0..n-1).each do |indiceCol| #le indice da coluna de matriz de alguma forma
+                if( (indiceCol%3) == modCol) # se indice mod == modcoluna
+                    (0..numLinhas-1).each do |indiceLin| #enquanto o j < numeroDelinhas 
+                        if mAux[indiceLin].nil?
+                            mAux[indiceLin]=[]
+                        end
+                        mAux[indiceLin][indiceColAux] = matriz[indiceLin][indiceCol]
+                    end
+                    indiceColAux+=1
+                end        
+            end
+        end            
     end
+
     
 # }
 
