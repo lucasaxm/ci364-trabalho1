@@ -1,0 +1,7 @@
+#!/bin/bash
+SAIDA=b
+SAIDA2=c
+./crypt.rb -c ${1} tarde ${2} $SAIDA > logc
+./crypt.rb -d $SAIDA tarde ${2} $SAIDA2 > logd
+diff texto_claro.pf $SAIDA2 > /dev/null
+[ $? -eq 0 ] && echo "Os dois arquivos são iguais."

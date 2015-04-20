@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 require 'i18n'
-
 # methods{
     def criaArrayChave(keyword)
         m = []
@@ -26,6 +25,8 @@ require 'i18n'
     end
 
     def criaMatrizChave(array, ordem)
+        # puts # debug
+        # puts "--- INICIO criaMatrizChave ---" # debug
         m = Array.new(ordem)
         i=0
         array.each do |c|
@@ -45,13 +46,31 @@ require 'i18n'
                 end
             end
         end
+        # imprimeMatriz(m) # debug
+        # puts "--- FIM criaMatrizChave ---" # debug
+        # puts # debug
         return m
     end
     
     
     
     def imprimeMatriz(m)
+        i=0
+        print "+ | "
+        m.first.each do |b|
+            print (i%10).to_s+" "
+            i+=1
+        end
+        puts
+        m.first.each do |b|
+            print "- "
+            i+=1
+        end
+        puts "- -"
+        l=0
         m.each do |linha|
+            print (l%10).to_s+" | "
+            l+=1
             linha.each do |elemento|
                 print elemento+' '
             end
@@ -60,10 +79,9 @@ require 'i18n'
     end
     
     def playfair (f, m, f_cifrado)
+        # puts # debug
+        # puts "--- INICIO playfair ---" # debug
         f_claro = preparaEntrada(f)
-        f_claro.rewind
-        puts "f_claro = ("+f_claro.read+")" # debug
-        imprimeMatriz(m) # debug
         f_claro.rewind
         textocifrado = ''
         cont=0
@@ -71,29 +89,29 @@ require 'i18n'
         pos2=[]
         f_claro.each_char do |c|
             if cont==0
-                puts # debug
+                # puts # debug
                 pos1 = buscaMatriz(m, c)
-                puts "c= "+c.inspect # debug
-                puts "pos1= "+pos1.inspect # debug
-                puts "pos1[0]= "+pos1[0].inspect # debug
-                puts "cont= "+cont.to_s # debug
+                # puts "c= "+c.inspect # debug
+                # puts "pos1= "+pos1.inspect # debug
+                # puts "pos1[0]= "+pos1[0].inspect # debug
+                # puts "cont= "+cont.to_s # debug
                 cont+=1               
             else
-                puts # debug
+                # puts # debug
                 pos2 = buscaMatriz(m, c)
-                puts "c ="+c.inspect # debug
-                puts "pos2= "+pos2.inspect # debug
-                puts "pos1[0]= "+pos1[0].inspect # debug
-                puts "pos2[0]= "+pos2[0].inspect # debug
-                puts "cont= "+cont.to_s # debug
+                # puts "c ="+c.inspect # debug
+                # puts "pos2= "+pos2.inspect # debug
+                # puts "pos1[0]= "+pos1[0].inspect # debug
+                # puts "pos2[0]= "+pos2[0].inspect # debug
+                # puts "cont= "+cont.to_s # debug
                 if pos1[0] == pos2[0]
                     charCifrado1 = m[pos1[0]][(pos1[1]+1)%5]
                     charCifrado2 = m[pos2[0]][(pos2[1]+1)%5]
                 elsif pos1[1] == pos2[1]
                     charCifrado1 = m[(pos1[0]+1)%5][pos1[1]]
-                    puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]" # debug
+                    # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]" # debug
                     charCifrado2 = m[(pos2[0]+1)%5][pos2[1]]
-                    puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]" # debug
+                    # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]" # debug
                 else
                     charCifrado1 = m[pos1[0]][pos2[1]]
                     charCifrado2 = m[pos2[0]][pos1[1]]
@@ -104,9 +122,13 @@ require 'i18n'
             end
         end
         f_claro.close
+        # puts "--- FIM playfair ---" # debug
+        # puts # debug
     end
 
     def desplayfair (f_playfair, m, f_decifrado)
+        # puts # debug
+        # puts "--- INICIO desplayfair ---" # debug
         textoDecifrado = ""
         cont=0
         pos1=[]
@@ -114,41 +136,45 @@ require 'i18n'
         f_playfair.each_char do |c|
             if cont==0
                 pos1 = buscaMatriz(m, c)
-                # puts "c= "+c.inspect
-                # puts "pos1= "+pos1.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "cont= "+cont.to_s
+                # puts "c= "+c.inspect # debug
+                # puts "pos1= "+pos1.inspect # debug
+                # puts "pos1[0]= "+pos1[0].inspect # debug
+                # puts "cont= "+cont.to_s # debug
                 cont+=1
                 
             else
                 pos2 = buscaMatriz(m, c)
-                # puts "c ="+c.inspect
-                # puts "pos2= "+pos2.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "pos2[0]= "+pos2[0].inspect
-                # puts "cont= "+cont.to_s
+                # puts "c ="+c.inspect # debug
+                # puts "pos2= "+pos2.inspect # debug
+                # puts "pos1[0]= "+pos1[0].inspect # debug
+                # puts "pos2[0]= "+pos2[0].inspect # debug
+                # puts "cont= "+cont.to_s # debug
                 if pos1[0] == pos2[0]
                     charDecifrado1 = m[pos1[0]][(pos1[1]-1)%5]
                     charDecifrado2 = m[pos2[0]][(pos2[1]-1)%5]
                 elsif pos1[1] == pos2[1]
                     charDecifrado1 = m[(pos1[0]-1)%5][pos1[1]]
-                    # puts "charDecifrado1 = m["+((pos1[0]-1)%5).to_s+"]["+pos1[1].to_s+"]"
+                    # puts "charDecifrado1 = m["+((pos1[0]-1)%5).to_s+"]["+pos1[1].to_s+"]" # debug
                     charDecifrado2 = m[(pos2[0]-1)%5][pos2[1]]
-                    # puts "charDecifrado2 = m["+((pos2[0]-1)%5).to_s+"]["+pos2[1].to_s+"]"
+                    # puts "charDecifrado2 = m["+((pos2[0]-1)%5).to_s+"]["+pos2[1].to_s+"]" # debug
                 else
                     charDecifrado1 = m[pos1[0]][pos2[1]]
                     charDecifrado2 = m[pos2[0]][pos1[1]]
                 end
                 cont=0
                 textoDecifrado = charDecifrado1.to_s+charDecifrado2.to_s    
-                # puts textoDecifrado.to_s #debug
+                # puts textoDecifrado.to_s # debug
                 f_decifrado.write(textoDecifrado)
             end
         end
+        # puts "--- FIM desplayfair ---" # debug
+        # puts # debug
         return f_decifrado
     end
     
     def preparaEntrada (f)
+        # puts # debug
+        # puts "--- INICIO preparaEntrada ---" # debug
         strdupla=""
         strdupla[0] = f.getc
         f_novo = File.open("texto_claro.pf","w+")
@@ -156,8 +182,6 @@ require 'i18n'
 
         f.each_char do |c|
             strdupla[1] = c
-            # puts "step "+(i+=1).to_s
-            # puts "dupla = [\""+strdupla[0]+"\"][\""+strdupla[1]+"\"]"
             strdupla = I18n.transliterate(strdupla).gsub(/\n/,'').gsub(/[^A-Za-z]/, '').upcase
             if(strdupla.length==2)
                 strdupla = strdupla.gsub(/J/,'I')
@@ -171,16 +195,16 @@ require 'i18n'
             elsif(strdupla.size==0)
                 strdupla[0] = f.getc
             end
-            # puts "tam = "+tam.to_s
-            # puts
         end
         f_novo.write(strdupla[0])
         tam+=1
         if (tam%2 != 0)
             f_novo.write(strdupla[0]=='X' ? 'H' : 'X')
         end
-            f_novo.rewind
-            puts "arquivo = "+f_novo.read # debug
+        f_novo.rewind
+        # puts f_novo.read # debug
+        # puts "--- FIM preparaEntrada ---" # debug
+        # puts # debug
         return f_novo
     end
 
@@ -200,6 +224,9 @@ require 'i18n'
     end
     
     def criaMatriz(maxlinhas, tamlinha, input)
+        # puts # debug
+        # puts "--- INICIO criaMatriz ---" # debug
+        # puts "input: "+input.to_s # debug
         m = [] # => cria vetor base para a matriz (arg=numero de linhas)
         i=0 # => controle de linhas
         input.each do |c|   # => percorre vetor de entrada (c = elemento)
@@ -234,10 +261,16 @@ require 'i18n'
                 end
             end
         end
+        # puts "matriz gerada:" # debug
+        # imprimeMatriz(m) # debug
+        # puts "--- FIM criaMatriz ---" # debug
+        # puts # debug
         return m
     end
     
     def transposicao(f, n, f_cifrado)
+        # puts # debug
+        # puts "--- INICIO transposicao ---" # debug
         f.rewind
         cont=0
         texto = []
@@ -245,20 +278,24 @@ require 'i18n'
             cont+=1
             texto << c
             if ((cont == 1000*n) || f.eof?)
+                # puts "Antes de mudar as colunas:" # debug
                 matriz = criaMatriz(1000,n,texto)
-                puts "Antes de mudar as colunas:" # debug
-                imprimeMatriz(matriz) # debug
                 matrizT = mudaOrdemColuna(matriz) #feito
-                puts "Depois de mudar as colunas:" # debug
-                imprimeMatriz(matrizT) # debug
+                # puts "Depois de mudar as colunas:" # debug
+                puts
+                # imprimeMatriz(matrizT) # debug
                 matrizTranspostaToArquivo(matrizT, f_cifrado)
                 cont =0
                 texto = ""
             end
         end
+        # puts "--- FIM transposicao ---" # debug
+        # puts # debug
     end
 
     def desfazTransposicao(f_cifrado, n, f_playfair)
+        # puts # debug
+        # puts "--- INICIO desfazTransposicao ---" # debug
         f_cifrado.rewind
         cont=0
         texto = []
@@ -266,33 +303,33 @@ require 'i18n'
             cont+=1
             texto << c
             if ((cont == 1000*n) || f_cifrado.eof?)
-                puts 'Texto'
-                puts texto.to_s
+                # puts 'Texto' # debug
+                # puts texto.to_s # debug
                 textoT = transformaArray(texto, cont/n, n)
-                puts 'Texto Transformado'
-                puts textoT.to_s
+                # puts "Matriz Transposta: " # debug
                 matriz = criaMatriz(1000,n,textoT)
-                puts "Matriz Trasposta: "
-                imprimeMatriz(matriz)
                 matrizT = refazOrdemColuna(matriz)
-                puts "refeita coluna MatrizTrasposta"
-                imprimeMatriz(matrizT)
+                # puts "refeita coluna MatrizTransposta" # debug
+                # imprimeMatriz(matrizT) # debug
                 matrizC = tiraComplemento(matrizT)
                 matrizToArquivo(matrizC,f_playfair) # escreve matriz no arquivo
                 cont =0
                 texto = ""
             end
         end
+        # puts "--- FIM desfazTransposicao ---" # debug
+        # puts # debug
     end
 
     def transformaArray(texto, numLinhas, numCol)
+        # puts # debug
+        # puts "--- INICIO transformaArray ---" # debug
         textoAux = []
         i=0
         (0..numLinhas-1).each do |indiceColAux|
             compCol = indiceColAux
             # puts compCol # debug
-            (0..numCol-1).each do |j|
-                # puts ( (indiceCol == compCol) && (compCol<numCol)) # debug
+            (0..numCol-1).each do |indiceCol|
                 if( compCol <((numCol)*(numLinhas)))
                     textoAux[i] = texto[compCol]
                     i+=1
@@ -301,16 +338,25 @@ require 'i18n'
                 end 
             end
         end
+        # puts "textoAux = "+textoAux.to_s # debug
+        # puts "--- FIM transformaArray ---" # debug
+        # puts # debug
         return textoAux
     end        
     
     def tiraComplemento(m)
+        # puts # debug
+        # puts "--- INICIO tiraComplemento ---" # debug
         ult = m.length-1
         linha=[]
         i=0
         j=1
         while j<m[ult].length
             if m[ult][i]!=m[ult][j]
+                linha << m[ult][i]
+                i+=1
+                j+=1
+            elsif i%2==1    # ainda ta dando errado caso n=impar
                 linha << m[ult][i]
                 i+=1
                 j+=1
@@ -323,6 +369,10 @@ require 'i18n'
             linha << m[ult][i]
         end
         m[ult] = linha
+        # puts "matriz sem complemento: " # debug
+        # imprimeMatriz (m) # debug
+        # puts "--- FIM tiraComplemento ---" # debug
+        # puts # debug
         return m
     end
 
@@ -351,21 +401,21 @@ require 'i18n'
         indiceColAux = 0
         numLinhas = matriz.length
         n = matriz.first.length
-        mAux = Array.new(numLinhas)    #cria matriz auxilia
+        mAux = Array.new(numLinhas)    #cria matriz auxiliar
         indiceComp = 0
-        (0..2).each do |contMod|
-            indiceComp= contMod
+        cont = n/3
+        (0..cont-1).each do |contMod|
+            indiceComp = contMod
             (0..n-1).each do |indiceCol| #le indice da coluna de matriz de alguma forma
-                if(indiceComp == indiceCol && indiceColAux < n)
+                if(indiceComp == indiceCol)
                     (0..numLinhas-1).each do |indiceLin| #enquanto o j < numeroDelinhas 
                         if mAux[indiceLin].nil?
                             mAux[indiceLin]=[]
                         end
                         mAux[indiceLin][indiceColAux] = matriz[indiceLin][indiceComp]
                     end
-                # puts indiceColAux
                 indiceColAux+=1
-                indiceComp+=2
+                indiceComp+=(cont)
                 end
             end
         end
@@ -396,6 +446,8 @@ require 'i18n'
 # }
 
 # main {
+    # puts # debug
+    # puts "--- INICIO main ---" # debug
     I18n.enforce_available_locales = false  
 
     if ARGV.length < 5
@@ -451,34 +503,36 @@ require 'i18n'
         f_playfair = File.open("texto_cifrado.pf","w+")
         playfair(f, matchave, f_playfair)
         f.close
-        f_playfair.rewind # debug
-        puts "playfair = " # debug
-        puts f_playfair.read # debug
-        puts # debug
+        # f_playfair.rewind # debug
+        # puts "playfair = " # debug
+        # puts f_playfair.read # debug
+        # puts # debug
         f_cifrado = File.open(ARGV[4],"w+")
         transposicao(f_playfair, n, f_cifrado)
         f_playfair.close
-        f_cifrado.rewind # debug
-        puts "cifrado = " # debug
-        puts f_cifrado.read # debug
+        # f_cifrado.rewind # debug
+        # puts "cifrado = " # debug
+        # puts f_cifrado.read # debug
         f_cifrado.close
     when 1
         f_playfair = File.open("texto_decifrado.tr","w+")
         desfazTransposicao(f, n, f_playfair)
-        f_playfair.rewind # debug
-        puts "destransposto = " # debug
-        puts f_playfair.read # debug
+        # f_playfair.rewind # debug
+        # puts "destransposto = " # debug
+        # puts f_playfair.read # debug
         f_playfair.rewind
-        puts # debug
+        # puts # debug
         f.close
 
         matchave = criaMatrizChave(criaArrayChave(keyword), 5)
         f_decifrado = File.open(ARGV[4],"w+")
         desplayfair(f_playfair, matchave, f_decifrado)
         f_playfair.close
-        puts "decifrado = " # debug
-        f_decifrado.rewind # debug
-        puts f_decifrado.read # debug
+        # puts "decifrado = " # debug
+        # f_decifrado.rewind # debug
+        # puts f_decifrado.read # debug
         f_decifrado.close
     end
+    # puts # debug
+    puts "--- FIM main ---"
 # }
