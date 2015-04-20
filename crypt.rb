@@ -59,37 +59,41 @@ require 'i18n'
         end
     end
     
-    def playfair (f, m)
+    def playfair (f, m, f_cifrado)
         f_claro = preparaEntrada(f)
+        f_claro.rewind
+        # puts "f_claro = ("+f_claro.read+")" # debug
+        # imprimeMatriz(m) # debug
         f_claro.rewind
         textocifrado = ''
         cont=0
         pos1=[]
         pos2=[]
-        f_cifrado = File.open("texto_cifrado.pf","w+")
         f_claro.each_char do |c|
             if cont==0
+                # puts # debug
                 pos1 = buscaMatriz(m, c)
-                # puts "c= "+c.inspect
-                # puts "pos1= "+pos1.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "cont= "+cont.to_s
+                # puts "c= "+c.inspect # debug
+                # puts "pos1= "+pos1.inspect # debug
+                # puts "pos1[0]= "+pos1[0].inspect # debug
+                # puts "cont= "+cont.to_s # debug
                 cont+=1               
             else
+                # puts # debug
                 pos2 = buscaMatriz(m, c)
-                # puts "c ="+c.inspect
-                # puts "pos2= "+pos2.inspect
-                # puts "pos1[0]= "+pos1[0].inspect
-                # puts "pos2[0]= "+pos2[0].inspect
-                # puts "cont= "+cont.to_s
+                # puts "c ="+c.inspect # debug
+                # puts "pos2= "+pos2.inspect # debug
+                # puts "pos1[0]= "+pos1[0].inspect # debug
+                # puts "pos2[0]= "+pos2[0].inspect # debug
+                # puts "cont= "+cont.to_s # debug
                 if pos1[0] == pos2[0]
                     charCifrado1 = m[pos1[0]][(pos1[1]+1)%5]
                     charCifrado2 = m[pos2[0]][(pos2[1]+1)%5]
                 elsif pos1[1] == pos2[1]
                     charCifrado1 = m[(pos1[0]+1)%5][pos1[1]]
-                    # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]"
+                    # puts "charCifrado1 = m["+((pos1[0]+1)%5).to_s+"]["+pos1[1].to_s+"]" # debug
                     charCifrado2 = m[(pos2[0]+1)%5][pos2[1]]
-                    # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]"
+                    # puts "charCifrado2 = m["+((pos2[0]+1)%5).to_s+"]["+pos2[1].to_s+"]" # debug
                 else
                     charCifrado1 = m[pos1[0]][pos2[1]]
                     charCifrado2 = m[pos2[0]][pos1[1]]
@@ -100,7 +104,6 @@ require 'i18n'
             end
         end
         f_claro.close
-        return f_cifrado
     end
 
     def desplayfair (f_cifrado, m)
@@ -179,7 +182,7 @@ require 'i18n'
             f_novo.write(strdupla[0]=='X' ? 'H' : 'X')
         end
             f_novo.rewind
-            puts "arquivo = "+f_novo.read
+            # puts "arquivo = "+f_novo.read # debug
         return f_novo
     end
 
@@ -236,23 +239,25 @@ require 'i18n'
         return m
     end
     
-    def transposicao(f_playfair)
-        f_playfair.rewind
-        f_cifrado = File.open("f_cifrado.tr","w+")
+    def transposicao(f, n, f_cifrado)
+        f.rewind
         cont=0
         texto = []
-        f_playfair.each_char do |c| #ler o arquivo
+        f.each_char do |c| #ler o arquivo
             cont+=1
             texto << c
-            if ((cont = 1000*n) || f_cifrado.eof?)
+            if ((cont == 1000*n) || f.eof?)
                 matriz = criaMatriz(1000,n,texto)
-                matrizT = mudaOrdemColuna(matriz, n) #feito
-                # escreve matriz no arquivo
+                # puts "Antes de mudar as colunas:" # debug
+                # imprimeMatriz(matriz) # debug
+                matrizT = mudaOrdemColuna(matriz) #feito
+                # puts "Depois de mudar as colunas:" # debug
+                # imprimeMatriz(matrizT) # debug
+                matrizTranspostaToArquivo(matrizT, f_cifrado)
                 cont =0
-            end    
+                texto = ""
+            end
         end
-        
-        #retorna f_cifrado
     end
 
     def desfazTransposicao(f_cifrado)
@@ -263,13 +268,14 @@ require 'i18n'
         f_cifrado.each_char do |c| #ler o arquivo
             cont+=1
             texto << c
-            if ((cont = 1000*n) || f_cifrado.eof?)
+            if ((cont == 1000*n) || f_cifrado.eof?)
                 #desfaz arrayParaMatriz
                 matriz = criaMatriz(1000,n,texto)
                 matrizT = refazOrdemColuna(matriz, n)
 
                 # escreve matriz no arquivo
                 cont =0
+                texto = ""
             end    
         end
         
@@ -316,9 +322,6 @@ require 'i18n'
                 end        
             end        
         end
-        imprimeMatriz(matriz)
-        puts 'novaMatriz'    
-        imprimeMatriz(mAux)
         return mAux
     end
 
@@ -347,34 +350,111 @@ require 'i18n'
         return mAux
     end
 
+    def matrizTranspostaToArquivo(m,f)
+        coluna=0
+        nlinhas=m.length
+        ncolunas=m.first.length
+        while coluna<ncolunas
+            linha=0
+            while linha<nlinhas
+                f.write(m[linha][coluna])
+                linha+=1
+            end
+            coluna+=1
+        end
+    end
     
+    def matrizToArquivo(m,f)
+        m.each do |linha|
+            linha.each do |elemento|
+                f.write(m)
+            end
+        end  
+    end
 # }
 
 # main {
     I18n.enforce_available_locales = false  
-    # pega n de colunas e chave da playfair
-    if ARGV.length < 2
-        abort "escreve os argumentos babaca"
+
+    if ARGV.length < 5
+        puts "escreve os argumentos babaca"
+        abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
+    elsif ARGV.length > 5
+        puts "escreveu coisa de mais, gênio."
+        abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     end
-    n=ARGV[0].to_i
-    if n%3!=0
-        abort "n sabe multiplicar por 3?"
+    #------
+    if ARGV[0]=="-c"
+        opt = 0
+    elsif ARGV[0]=="-d"
+        opt = 1
+    else
+        puts "que tal ler o manual antes de escrever os parametros?"
+        abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     end
-    keyword=ARGV[1]
-    f=File.open("newton.ign", "r")
+    #------
+    if File.exists? ARGV[1]
+        f=File.open(ARGV[1], "r")
+    else
+        puts "sabe o que seria uma boa? um arquivo que existe."
+        puts "arquivoDeEntrada deve ser um arquivo existente."
+        abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
+    end
+    #------ 
+    if ARGV[2] =~ /\d/
+        puts "nao eh a toa que se chama 'palavraChave'."
+        puts "a palavraChave nao pode conter numeros."
+        abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
+    else
+        keyword=ARGV[2]
+    end
+    #------
+    if ARGV[3] =~ /\d/
+        n = ARGV[3].to_i
+        if n%3!=0
+            puts "partiu aula de matematica."
+            puts "O parametro numeroChave deve ser multiplo de 3."
+            abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
+        end
+    else
+        puts "nao eh a toa que se chama 'numeroChave'."
+        puts "o numeroChave tem que ser um numero (duh) E multiplo de 3."
+        abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
+    end
     
     # matriz (array de arrays) gerada a partir da chave
-    matchave = criaMatrizChave(criaArrayChave(keyword), 5)
-    
-    # textoclaro = read_file("newton.txt")
-    # textoclaro = "lucas affonso xavier de morais"
-    f_playfair = playfair(f, matchave)
-    f.close
-    f_playfair.rewind
-    puts "arquivo = "+f_playfair.read
-    # f_decifrado = desplayfair(f_playfair, matchave)
-    # f_decifrado.rewind
-    # puts "arquivo = "+f_decifrado.read
-    # textomaiscifrado = transposicao(textocifrado)
-    # f_decifrado.close
+    case opt
+    when 0
+        matchave = criaMatrizChave(criaArrayChave(keyword), 5)
+        f_playfair = File.open("texto_cifrado.pf","w+")
+        playfair(f, matchave, f_playfair)
+        f.close
+        # f_playfair.rewind # debug
+        # puts "playfair = " # debug
+        # puts f_playfair.read # debug
+        # puts # debug
+        f_cifrado = File.open(ARGV[4],"w+")
+        transposicao(f_playfair, n, f_cifrado)
+        f_playfair.close
+        # f_cifrado.rewind # debug
+        # puts "cifrado = " # debug
+        # puts f_cifrado.read # debug
+        f_cifrado.close
+    when 1
+        matchave = criaMatrizChave(criaArrayChave(keyword), 5)
+        f_playfair = File.open("texto_decifrado.pf","w+")
+        desplayfair(f, matchave, f_playfair)
+        f.close
+        # f_playfair.rewind # debug
+        # puts "playfair = " # debug
+        # puts f_playfair.read # debug
+        # puts # debug
+        f_decifrado = File.open(ARGV[4],"w+")
+        transposicao(f_playfair, n, f_cifrado)
+        f_playfair.close
+        # f_cifrado.rewind # debug
+        # puts "cifrado = " # debug
+        # puts f_cifrado.read # debug
+        f_cifrado.close
+    end
 # }
