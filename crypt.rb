@@ -52,8 +52,6 @@ require 'i18n'
         return m
     end
     
-    
-    
     def imprimeMatriz(m)
         i=0
         print "+ | "
@@ -149,22 +147,24 @@ require 'i18n'
                 # puts "pos1[0]= "+pos1[0].inspect # debug
                 # puts "pos2[0]= "+pos2[0].inspect # debug
                 # puts "cont= "+cont.to_s # debug
-                if pos1[0] == pos2[0]
-                    charDecifrado1 = m[pos1[0]][(pos1[1]-1)%5]
-                    charDecifrado2 = m[pos2[0]][(pos2[1]-1)%5]
-                elsif pos1[1] == pos2[1]
-                    charDecifrado1 = m[(pos1[0]-1)%5][pos1[1]]
-                    # puts "charDecifrado1 = m["+((pos1[0]-1)%5).to_s+"]["+pos1[1].to_s+"]" # debug
-                    charDecifrado2 = m[(pos2[0]-1)%5][pos2[1]]
-                    # puts "charDecifrado2 = m["+((pos2[0]-1)%5).to_s+"]["+pos2[1].to_s+"]" # debug
-                else
-                    charDecifrado1 = m[pos1[0]][pos2[1]]
-                    charDecifrado2 = m[pos2[0]][pos1[1]]
+                if (pos1[0] != pos2[0]) || (pos1[1] != pos2[1]) # se os caracteres n forem iguais, faz tudo.
+                    if (pos1[0] == pos2[0])
+                        charDecifrado1 = m[pos1[0]][(pos1[1]-1)%5]
+                        charDecifrado2 = m[pos2[0]][(pos2[1]-1)%5]
+                    elsif pos1[1] == pos2[1]
+                        charDecifrado1 = m[(pos1[0]-1)%5][pos1[1]]
+                        # puts "charDecifrado1 = m["+((pos1[0]-1)%5).to_s+"]["+pos1[1].to_s+"]" # debug
+                        charDecifrado2 = m[(pos2[0]-1)%5][pos2[1]]
+                        # puts "charDecifrado2 = m["+((pos2[0]-1)%5).to_s+"]["+pos2[1].to_s+"]" # debug
+                    else
+                        charDecifrado1 = m[pos1[0]][pos2[1]]
+                        charDecifrado2 = m[pos2[0]][pos1[1]]
+                    end
+                    textoDecifrado = charDecifrado1.to_s+charDecifrado2.to_s    
+                    # puts textoDecifrado.to_s # debug
+                    f_decifrado.write(textoDecifrado)
                 end
                 cont=0
-                textoDecifrado = charDecifrado1.to_s+charDecifrado2.to_s    
-                # puts textoDecifrado.to_s # debug
-                f_decifrado.write(textoDecifrado)
             end
         end
         # puts "--- FIM desplayfair ---" # debug
@@ -286,7 +286,7 @@ require 'i18n'
                 # imprimeMatriz(matrizT) # debug
                 matrizTranspostaToArquivo(matrizT, f_cifrado)
                 cont =0
-                texto = ""
+                texto = []
             end
         end
         # puts "--- FIM transposicao ---" # debug
@@ -311,10 +311,9 @@ require 'i18n'
                 matrizT = refazOrdemColuna(matriz)
                 # puts "refeita coluna MatrizTransposta" # debug
                 # imprimeMatriz(matrizT) # debug
-                matrizC = tiraComplemento(matrizT)
-                matrizToArquivo(matrizC,f_playfair) # escreve matriz no arquivo
+                matrizToArquivo(matrizT,f_playfair) # escreve matriz no arquivo
                 cont =0
-                texto = ""
+                texto = []
             end
         end
         # puts "--- FIM desfazTransposicao ---" # debug
@@ -343,38 +342,6 @@ require 'i18n'
         # puts # debug
         return textoAux
     end        
-    
-    def tiraComplemento(m)
-        # puts # debug
-        # puts "--- INICIO tiraComplemento ---" # debug
-        ult = m.length-1
-        linha=[]
-        i=0
-        j=1
-        while j<m[ult].length
-            if m[ult][i]!=m[ult][j]
-                linha << m[ult][i]
-                i+=1
-                j+=1
-            elsif i%2==1    # ainda ta dando errado caso n=impar
-                linha << m[ult][i]
-                i+=1
-                j+=1
-            else
-                i+=2
-                j+=2
-            end
-        end
-        if i<m[ult].length
-            linha << m[ult][i]
-        end
-        m[ult] = linha
-        # puts "matriz sem complemento: " # debug
-        # imprimeMatriz (m) # debug
-        # puts "--- FIM tiraComplemento ---" # debug
-        # puts # debug
-        return m
-    end
 
     def mudaOrdemColuna(matriz)
         indiceColAux = 0
@@ -534,5 +501,5 @@ require 'i18n'
         f_decifrado.close
     end
     # puts # debug
-    puts "--- FIM main ---"
+    # puts "--- FIM main ---" # debug
 # }
