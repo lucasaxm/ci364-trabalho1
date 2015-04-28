@@ -23,34 +23,6 @@ require 'i18n'
         end
         return m
     end
-
-    def criaMatrizChave(array, ordem)
-        # puts # debug
-        # puts "--- INICIO criaMatrizChave ---" # debug
-        m = Array.new(ordem)
-        i=0
-        array.each do |c|
-            if i<ordem
-                if m[i].nil?
-                    m[i]=[]
-                end
-                if m[i].length<ordem
-                    m[i] << c.upcase
-                else
-                    if (i+=1)<ordem
-                        if m[i].nil?
-                            m[i]=[]
-                        end
-                        m[i] << c.upcase
-                    end
-                end
-            end
-        end
-        # imprimeMatriz(m) # debug
-        # puts "--- FIM criaMatrizChave ---" # debug
-        # puts # debug
-        return m
-    end
     
     def imprimeMatriz(m)
         i=0
@@ -208,7 +180,6 @@ require 'i18n'
         return f_novo
     end
 
-
     def buscaMatriz (matriz, c)
         ret =[]
         (0..(matriz.length-1)).each do |i|
@@ -282,7 +253,7 @@ require 'i18n'
                 matriz = criaMatriz(1000,n,texto)
                 matrizT = mudaOrdemColuna(matriz) #feito
                 # puts "Depois de mudar as colunas:" # debug
-                puts
+                # puts # debug
                 # imprimeMatriz(matrizT) # debug
                 matrizTranspostaToArquivo(matrizT, f_cifrado)
                 cont =0
@@ -305,7 +276,7 @@ require 'i18n'
             if ((cont == 1000*n) || f_cifrado.eof?)
                 # puts 'Texto' # debug
                 # puts texto.to_s # debug
-                textoT = transformaArray(texto, cont/n, n)
+                textoT = LinhaToColuna(texto, cont/n, n)
                 # puts "Matriz Transposta: " # debug
                 matriz = criaMatriz(1000,n,textoT)
                 matrizT = refazOrdemColuna(matriz)
@@ -320,9 +291,9 @@ require 'i18n'
         # puts # debug
     end
 
-    def transformaArray(texto, numLinhas, numCol)
+    def LinhaToColuna(texto, numLinhas, numCol)
         # puts # debug
-        # puts "--- INICIO transformaArray ---" # debug
+        # puts "--- INICIO LinhaToColuna ---" # debug
         textoAux = []
         i=0
         (0..numLinhas-1).each do |indiceColAux|
@@ -338,7 +309,7 @@ require 'i18n'
             end
         end
         # puts "textoAux = "+textoAux.to_s # debug
-        # puts "--- FIM transformaArray ---" # debug
+        # puts "--- FIM LinhaToColuna ---" # debug
         # puts # debug
         return textoAux
     end        
@@ -418,10 +389,8 @@ require 'i18n'
     I18n.enforce_available_locales = false  
 
     if ARGV.length < 5
-        puts "escreve os argumentos babaca"
         abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     elsif ARGV.length > 5
-        puts "escreveu coisa de mais, gênio."
         abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     end
     #------
@@ -430,20 +399,17 @@ require 'i18n'
     elsif ARGV[0]=="-d"
         opt = 1
     else
-        puts "que tal ler o manual antes de escrever os parametros?"
         abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     end
     #------
     if File.exists? ARGV[1]
         f=File.open(ARGV[1], "r")
     else
-        puts "sabe o que seria uma boa? um arquivo que existe."
         puts "arquivoDeEntrada deve ser um arquivo existente."
         abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     end
     #------ 
     if ARGV[2] =~ /\d/
-        puts "nao eh a toa que se chama 'palavraChave'."
         puts "a palavraChave nao pode conter numeros."
         abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     else
@@ -453,20 +419,18 @@ require 'i18n'
     if ARGV[3] =~ /\d/
         n = ARGV[3].to_i
         if n%3!=0
-            puts "partiu aula de matematica."
             puts "O parametro numeroChave deve ser multiplo de 3."
             abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
         end
     else
-        puts "nao eh a toa que se chama 'numeroChave'."
-        puts "o numeroChave tem que ser um numero (duh) E multiplo de 3."
+        puts "o numeroChave tem que ser um numero E multiplo de 3."
         abort "./crypt.rb [-c|-d] [arquivoDeEntrada] [palavraChave] [numeroChave] [arquivoDeSaida]"
     end
     
     # matriz (array de arrays) gerada a partir da chave
     case opt
     when 0
-        matchave = criaMatrizChave(criaArrayChave(keyword), 5)
+        matchave = criaMatriz(5,5,criaArrayChave(keyword))
         f_playfair = File.open("texto_cifrado.pf","w+")
         playfair(f, matchave, f_playfair)
         f.close
@@ -491,7 +455,7 @@ require 'i18n'
         # puts # debug
         f.close
 
-        matchave = criaMatrizChave(criaArrayChave(keyword), 5)
+        matchave = criaMatriz(5,5,criaArrayChave(keyword))
         f_decifrado = File.open(ARGV[4],"w+")
         desplayfair(f_playfair, matchave, f_decifrado)
         f_playfair.close
